@@ -1,5 +1,6 @@
 import React,{Component} from 'react';
 import TaskItem from './TaskItem';
+import {connect} from 'react-redux'
 
 class TaskList extends Component {
 
@@ -24,6 +25,7 @@ class TaskList extends Component {
         })
     }
     render() {
+        // console.log(this.props.tasks)
         var tasks=this.props.tasks
         var filterName=this.state.filterName
         var filterStatus=this.state.filterStatus
@@ -33,10 +35,10 @@ class TaskList extends Component {
                 key={task.id}
                 index={index}
                 task={task}
-                onUpdateStatus={this.props.onUpdateStatus}
-                onDeleteItem={this.props.onDeleteItem}
-                onReceiveEvent={this.props.onReceiveEvent}
-                onUpdate={this.props.onUpdate}
+                // onUpdateStatus={this.props.onUpdateStatus}
+                // onDeleteItem={this.props.onDeleteItem}
+                // onReceiveEvent={this.props.onReceiveEvent}
+                // onUpdate={this.props.onUpdate}
             ></TaskItem>
         })
         return (
@@ -87,4 +89,10 @@ class TaskList extends Component {
     }
 }
 
-export default TaskList 
+// chuyển các state trong store (reducer) thành các props để truyền vào component (tasklist)
+const mapStateToProps = (state) =>{
+    return {
+        tasks : state.tasks
+    }
+}
+export default connect(mapStateToProps, null)(TaskList) 

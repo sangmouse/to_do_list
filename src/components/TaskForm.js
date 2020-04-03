@@ -1,4 +1,6 @@
 import React,{Component} from 'react';
+import {connect} from 'react-redux'
+import * as actions from './../actions/index'
 
 class TaskForm extends Component {
 
@@ -12,8 +14,8 @@ class TaskForm extends Component {
         };
     }   
 
-    onCloseForm(value){
-        this.props.onReceiveEvent(value)
+    onCloseForm(){
+        this.props.onCloseForm()
     }
     onChange = (event) =>{
         var target=event.target
@@ -30,7 +32,8 @@ class TaskForm extends Component {
     }
     onSubmit = (event) =>{
         event.preventDefault()
-        this.props.onReceiveDataForm(this.state)
+        // this.props.onReceiveDataForm(this.state)
+        this.props.onSaveTask(this.state)
         this.onClear()
         this.onCloseForm()
     }
@@ -41,22 +44,22 @@ class TaskForm extends Component {
         })
     }
     componentWillMount(){
-        if(this.props.taskEditing){
+        if(this.props.itemEditing){
             this.setState({
-                id:this.props.taskEditing.id,
-                name:this.props.taskEditing.name,
-                status:this.props.taskEditing.status
+                id:this.props.itemEditing.id,
+                name:this.props.itemEditing.name,
+                status:this.props.itemEditing.status
             })
         }
     }
     componentWillReceiveProps(nextProps){
-        if(nextProps && nextProps.taskEditing){
+        if(nextProps && nextProps.itemEditing){
             this.setState({
-                id:nextProps.taskEditing.id,
-                name:nextProps.taskEditing.name,
-                status:nextProps.taskEditing.status
+                id:nextProps.itemEditing.id,
+                name:nextProps.itemEditing.name,
+                status:nextProps.itemEditing.status
             })
-        }else if(!nextProps.taskEditing){
+        }else if(!nextProps.itemEditing){
             this.setState({
                 id:'',
                 name:'',
@@ -66,11 +69,12 @@ class TaskForm extends Component {
     }
     render() {
         var id=this.state.id
+        if(!this.props.isDisplayForm) return null
 
         return (
             <div className="panel panel-warning">
                     <div className="panel-heading">
-                        <button onClick={() => this.onCloseForm(false)}>
+                        <button onClick={() => this.onCloseForm()}>
                             {id !== ''? 'Cập nhật công việc' : 'Thêm Công Việc'}
                         </button>
                     </div>
@@ -113,4 +117,21 @@ class TaskForm extends Component {
     }
 }
 
-export default TaskForm 
+
+const mapStateToProps = (state, props) => {
+    return {
+        isDisplayForm: state.isDisplayForm,
+        itemEditing : state.itemEditing
+    }
+}
+const mapDispatchToProps = (dispatch, props) => {
+    return {
+        onSaveTask: (task) => {
+            dispatch(actions.saveTask(task))
+        },
+        onCloseForm : () => {
+            dispatch(actions.closeForm())
+        }
+    }
+}
+export default connect(mapStateToProps,mapDispatchToProps )(TaskForm) 
